@@ -23,12 +23,12 @@ Also, the UrbanSound8K metadata is pruned and output to OUT_ROOT as well.
 
 parser = ArgumentParser()
 parser.add_argument(
-    "raw-data-root",
+    "raw_data_root",
     type=Path,
     help='The directory that holds UrbanSounds8K "audio/" and "metadata/"',
 )
 parser.add_argument(
-    "out-root", type=Path, help="The output directory for the converted data"
+    "out_root", type=Path, help="The output directory for the converted data"
 )
 parser.add_argument(
     "--eight-k",
@@ -55,7 +55,7 @@ def convert_audio(raw_data_root, out_root, eight_k=False):
         outpath = out_root / Path(*path.parts[-2:])
 
         if not outpath.parent.exists():
-            outpath.parent.mkdir()
+            outpath.parent.mkdir(parents=True)
         if not outpath.exists():
             sample_rate, codec = 16000, "pcm_s16le"
             if eight_k:

@@ -1,0 +1,11 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from us8kdata.converter import parser, convert_audio, convert_metadata, which
+
+if __name__ == "__main__":
+    if which("ffmpeg") is None:
+        raise UserWarning("ERROR: Can't find ffmpeg on PATH\n\tInstall ffmpeg and try again\n\t(eg 'brew install ffmpeg')")
+    args = parser.parse_args()
+    convert_audio(args.raw_data_root, args.out_root, eight_k=args.eight_k)
+    metadata_path = args.raw_data_root / "metadata/UrbanSound8K.csv"
+    convert_metadata(metadata_path, args.out_root)

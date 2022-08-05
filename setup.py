@@ -13,5 +13,5 @@ setup(name='us8kdata',
       test_suite='tests',
       # include_package_data: to install data from MANIFEST.in
       include_package_data=True,
-      scripts=['scripts/us8kdata-run'],
+      scripts=['scripts/us8kdata-convert'],
       zip_safe=False)

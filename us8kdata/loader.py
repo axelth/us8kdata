@@ -18,17 +18,28 @@ class UrbanSound8K:
         '''return a list of the folds contained in the dataset'''
         return self.metadata.fold.sort_values().unique().tolist()
 
-    def fold_audio_generator(self, fold) -> Generator:
+    def fold_audio_generator(self, fold, classID=None) -> Generator:
         '''generator that yields the sample array for each audio file in a fold'''
-        files = self.metadata.query('fold == @fold').slice_file_name.tolist()
+        df = self.filter_metadata(fold, classID)
+        files = df.slice_file_name.tolist()
         for fname in files:
             sr, samples = wavfile.read(self.data_root / f'fold{fold}/{fname}')
             yield samples
 
-    def get_fold_classIDs(self, fold) -> pd.Series:
+    def get_fold_classIDs(self, fold, classID=None) -> pd.Series:
         '''return classIDs for fold as a Series'''
-        return self.metadata.query('fold == @fold').classID
+        return self.filter_metadata(fold, classID).classID
 
-    def get_fold_class_names(self, fold) -> pd.Series:
+    def get_fold_class_names(self, fold, classID=None) -> pd.Series:
         '''return class names for fold as a Series'''
-        return self.metadata.query('fold == @fold')['class']
+        return self.filter_metadata(fold, classID)['class']
+
+    def filter_metadata(self, fold, classID=None):
+        '''filter metadata on fold and classID'''
+        df = self.metadata
+        if classID != None:
+            if not hasattr(classID, "__iter__"):
+                classID = [classID]
+            return df[(df['fold']==fold) & (df['classID'].isin(classID))]
+        else:
+            return df[(df['fold']==fold)]

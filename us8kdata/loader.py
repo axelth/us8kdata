@@ -37,9 +37,11 @@ class UrbanSound8K:
     def filter_metadata(self, fold, classID=None):
         '''filter metadata on fold and classID'''
         df = self.metadata
+        if not hasattr(fold, "__iter__"):
+                fold = [fold]
         if classID != None:
             if not hasattr(classID, "__iter__"):
                 classID = [classID]
-            return df[(df['fold']==fold) & (df['classID'].isin(classID))]
+            return df[(df['fold'].isin(fold)) & (df['classID'].isin(classID))]
         else:
-            return df[(df['fold']==fold)]
+            return df[(df['fold'].isin(fold))]

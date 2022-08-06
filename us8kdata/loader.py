@@ -44,4 +44,4 @@ class UrbanSound8K:
                 classID = [classID]
             return df[(df['fold'].isin(fold)) & (df['classID'].isin(classID))]
         else:
-            return df[(df['fold']==fold)]
+            return df[(df['fold'].isin(fold))]

@@ -48,14 +48,15 @@ class UrbanSound8K:
         '''return class names for fold as a Series'''
         return self.filter_metadata(fold, classID)['class']
 
-    def filter_metadata(self, fold, classID=None):
+    def filter_metadata(self, fold, classID=None) -> pd.DataFrame:
         '''filter metadata on fold and classID'''
         df = self.metadata
         if not hasattr(fold, "__iter__"):
-                fold = [fold]
-        if classID != None:
+            fold = [fold]
+        if classID is not None:
             if not hasattr(classID, "__iter__"):
                 classID = [classID]
-            return df[(df['fold'].isin(fold)) & (df['classID'].isin(classID))]
+            return df[(df['fold'].isin(fold))
+                      & (df['classID'].isin(classID))]
         else:
-            return df[(df['fold'].isin(fold))]
+            return df[df['fold'].isin(fold)]

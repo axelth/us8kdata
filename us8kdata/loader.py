@@ -6,7 +6,14 @@ from scipy.io import wavfile
 
 
 class UrbanSound8K:
-    '''Dataloader for the cleaned UrbanSound8K dataset'''
+    '''
+    Dataloader for the cleaned UrbanSound8K dataset
+    init params: data_dir - root directory of cleaned data
+    attributes:
+        data_root: absolute path to data_dir
+        metadata: dataset metadata DataFrame
+        sample_rate: sample rate of audio files
+    '''
 
     def __init__(self, data_dir):
         self.data_root = Path(data_dir).absolute()
@@ -20,7 +27,13 @@ class UrbanSound8K:
 
     def samples_from_file(self,
                           path: Union[Path, str]) -> np.ndarray:
-        ''''''
+        '''
+        Read samples and return them as float32
+        params: path - path of wavfile
+        returns:
+            sr: sample rate
+            samples: array of samples as float32 normalized to [-1.0 1.0]
+        '''
         sr, samples = wavfile.read(path)
         # convert int16 samples to float32 normalized to
         # between -1.0 .. 1.0, to match the values returned
@@ -31,8 +44,17 @@ class UrbanSound8K:
                    / (np.iinfo(np.int16).max - 1))
         return sr, samples
 
-    def fold_audio_generator(self, fold, classID=None) -> Generator:
-        '''generator that yields the sample array for each audio file in a fold'''
+    def fold_audio_generator(self,
+                             fold: Union[int, List],
+                             classID: Union[int, List] = None) -> Generator:
+        '''
+        Generator function that yields the sample array
+        for each audio file in one or more folds
+        params:
+            fold: fold ID or list of fold IDs
+            classID: classID or list of classIDs
+        yields: array of float32 samples
+        '''
         df = self.filter_metadata(fold, classID)
         files = df.slice_file_name.tolist()
         for fname in files:
@@ -41,15 +63,21 @@ class UrbanSound8K:
             yield samples
 
     def get_fold_classIDs(self, fold, classID=None) -> pd.Series:
-        '''return classIDs for fold as a Series'''
+        '''return classIDs for fold or folds as a Series'''
         return self.filter_metadata(fold, classID).classID
 
     def get_fold_class_names(self, fold, classID=None) -> pd.Series:
-        '''return class names for fold as a Series'''
+        '''return class names for fold or folds as a Series'''
         return self.filter_metadata(fold, classID)['class']
 
     def filter_metadata(self, fold, classID=None) -> pd.DataFrame:
-        '''filter metadata on fold and classID'''
+        '''
+        filter metadata on fold and classID
+        params:
+            fold: fold ID or list of fold IDs
+            classID: classID or list of classIDs
+        returns: DataFrame
+        '''
         df = self.metadata
         if not hasattr(fold, "__iter__"):
             fold = [fold]

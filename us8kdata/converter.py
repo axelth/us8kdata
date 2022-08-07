@@ -3,6 +3,7 @@ import pandas as pd
 from pathlib import Path
 from argparse import ArgumentParser
 from shutil import which
+
 """
 Convert UrbanSound8K audio clips stored in RAW_AUDIO_ROOT
 into 16kHz (default) or 8kHz 16bit mono wave files, and output them to  OUT_ROOT.
@@ -78,7 +79,9 @@ def convert_metadata(metadata_path, out_root):
 
 if __name__ == "__main__":
     if which("ffmpeg") is None:
-        raise UserWarning("ERROR: Can't find ffmpeg on PATH\n\tInstall ffmpeg and try again\n\t(eg 'brew install ffmpeg')")
+        raise UserWarning(
+            "ERROR: Can't find ffmpeg on PATH\n\tInstall ffmpeg and try again\n\t(eg 'brew install ffmpeg')"
+        )
     args = parser.parse_args()
     convert_audio(args.raw_data_root, args.out_root, eight_k=args.eight_k)
     metadata_path = args.raw_data_root / "metadata/UrbanSound8K.csv"

@@ -24,6 +24,12 @@ class UrbanSound8K:
         files = df.slice_file_name.tolist()
         for fname in files:
             sr, samples = wavfile.read(self.data_root / f'fold{fold}/{fname}')
+            # convert int16 samples to float32 normalized to
+            # between -1.0 .. 1.0, to match the values returned
+            # by librosa.load.
+            # We don't use librosa.load itself because it was
+            # 4x slower than wavfile.read
+            samples = samples.astype(np.float32) / (np.iinfo(np.int16).max - 1)
             yield samples
 
     def get_fold_classIDs(self, fold, classID=None) -> pd.Series:

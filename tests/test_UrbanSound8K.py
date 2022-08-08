@@ -99,3 +99,16 @@ class TestUrbanSound8K:
         sr, samples = loader.samples_from_file(path)
         assert sr == loader.sample_rate
         assert isinstance(samples, np.ndarray)
+
+    def test_fold_audio_generator(self):
+        loader = UrbanSound8K(DATADIR)
+        folds = [1,2]
+        df = loader.filter_metadata(folds)
+        nr_rows = len(df)
+        sample_arrays = [arr for arr in loader.fold_audio_generator(folds)]
+        nr_sample_arrays = len(sample_arrays)
+        assert nr_rows == nr_sample_arrays
+        fname, fold = df.iloc[-1, [0, 2]]
+        path = loader.data_root / f'fold{fold}' / fname
+        _, sample_array = loader.samples_from_file(path)
+        assert np.allclose(sample_array, sample_arrays[-1])

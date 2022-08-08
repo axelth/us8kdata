@@ -54,9 +54,8 @@ class UrbanSound8K:
         yields: array of float32 samples
         """
         df = self.filter_metadata(fold, classID)
-        files = df.slice_file_name.tolist()
-        for fname in files:
-            path = self.data_root / f"fold{fold}/{fname}"
+        for _, foldnr, fname in df[['fold', 'slice_file_name']].itertuples():
+            path = self.data_root / f"fold{foldnr}/{fname}"
             sr, samples = self.samples_from_file(path)
             yield samples
 
